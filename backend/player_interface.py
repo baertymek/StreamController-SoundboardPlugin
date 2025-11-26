@@ -5,10 +5,18 @@ class PlayerInterface(ABC):
 
     @abstractmethod
     def set_device(self, device):
-       pass
+        pass
 
     @abstractmethod
-    def play_sound(self, path_to_sound, volume):
+    def is_playing(self):
+        pass
+
+    @abstractmethod
+    def remaining_time(self):
+        pass
+
+    @abstractmethod
+    def play_sound(self, path_to_sound, volume) -> int:
         pass
 
     @abstractmethod

@@ -19,11 +19,17 @@ class PlayerPygame(PlayerInterface):
         pygame.mixer.quit()
         self.device = device
 
+    def is_playing(self):
+        return pygame.mixer.music.get_busy()
+
+    def remaining_time(self):
+        return None
+
     def play_sound(self, path_to_sound, volume):
-        log.debug(f"Play file: {path_to_sound} at {volume}")
+        log.debug(f"Play file: {path_to_sound} at {volume}%")
         pygame.mixer.quit()
         pygame.mixer.init(devicename=self.device)
-    
+
         pygame.mixer.music.load(path_to_sound)
         pygame.mixer.music.set_volume(volume/100.0)
         pygame.mixer.music.play()

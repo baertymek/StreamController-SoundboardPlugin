@@ -5,6 +5,7 @@ from src.backend.PluginManager.InputBases import ActionCore
 
 # Helpers
 from com_buggex_soundboard.helpers import Consts
+from com_buggex_soundboard.helpers.Consts import BehaviorIfPlaying
 
 # Import gtk modules - used for the config rows
 import gi
@@ -18,10 +19,12 @@ class PlayAction(ActionCore):
 
     sound_path      : str = ""
     sound_volume    : int = 100
-    if_playing      : Consts.BehaviorIfPlaying = Consts.BehaviorIfPlaying.Restart
+    if_playing      : Consts.BehaviorIfPlaying = Consts.BehaviorIfPlaying.Stop
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.player_id: int = -1
 
         self.add_event_assigner(EventAssigner(
             id="play",
@@ -64,9 +67,9 @@ class PlayAction(ActionCore):
         self.set_settings(settings)
 
     def on_sound_if_playing_changed(self, control, param):
-        self.if_playing = self.ui_if_playing.get_selected()
+        self.if_playing = Consts.BehaviorIfPlaying(self.ui_if_playing.get_selected())
         settings = self.get_settings()
-        settings[Consts.SETTING_SOUND_IF_PLAYING] = self.if_playing
+        settings[Consts.SETTING_SOUND_IF_PLAYING] = self.if_playing.value
         self.set_settings(settings)
 
     def load_config_values(self):
@@ -82,13 +85,38 @@ class PlayAction(ActionCore):
 
         if_playing = settings.get(Consts.SETTING_SOUND_IF_PLAYING)
         if if_playing is not None:
-            self.if_playing = if_playing
+            self.if_playing = Consts.BehaviorIfPlaying(if_playing)
 
     def on_key_down(self):
-        self.plugin_base.backend.play_sound(self.sound_path, self.sound_volume)
+        if self.plugin_base.backend.is_playing(self.player_id):
+            match self.if_playing:
+                case BehaviorIfPlaying.Restart:
+                    self.plugin_base.backend.stop_sound(self.player_id)
+                    self.player_id = self.plugin_base.backend.play_sound(self.sound_path, self.sound_volume)
+                    log.debug(self.player_id)
+                case BehaviorIfPlaying.OnTop:
+                    self.player_id = self.plugin_base.backend.play_sound(self.sound_path, self.sound_volume)
+                    log.debug(self.player_id)
+                case _:
+                    self.plugin_base.backend.stop_sound(self.player_id)
+                    self.player_id = -1
+                    log.debug(self.player_id)
+        else:
+            self.player_id = self.plugin_base.backend.play_sound(self.sound_path, self.sound_volume)
+
+        self.on_tick()
 
     def on_ready(self):
         self.load_config_values()
+
+    def on_tick(self):
+        if self.player_id > -1:
+            if self.plugin_base.backend.is_playing(self.player_id):
+                self.set_bottom_label(self.plugin_base.backend.remaining_time_string(self.player_id), update=True)
+            else:
+                self.set_bottom_label(None, update=True)
+                self.plugin_base.backend.stop_sound(self.player_id)
+                self.player_id = -1
 
 class PathRow(Adw.PreferencesRow):
     def __init__(self, action : PlayAction):

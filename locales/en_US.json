@@ -6,15 +6,15 @@
     "actions.play.path.button":         "Browse",
     "actions.play.path.dialog.title":   "Choose a sound file",
     "actions.play.if_playing.title":    "Choose what to do if already playing",
-    "actions.play.if_playing.restart":  "Restart",
     "actions.play.if_playing.stop":     "Stop",
-    "actions.play.if_playing.ontop":    "Play on top",
+    "actions.play.if_playing.restart":  "Restart",
+    "actions.play.if_playing.on_top":    "Play on top",
     
     "actions.stop.title": "Stop sound",
     "actions.stop.label": "Stop",
 
     "setting.device": "Playback device",
     "setting.player": "Player",
-    "setting.player.note": "libVLC is better quality, but does not work for Flatpak installs"
+    "setting.player.note": "libVLC is better quality, but does not work for Flatpak installs\nRemaining time is unsupported on Pygame"
     
 }

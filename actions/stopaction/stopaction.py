@@ -23,6 +23,6 @@ class StopAction(ActionCore):
         self.set_media(media_path=icon_path, size=0.75)
 
     def on_key_down(self):
-        self.plugin_base.backend.stop_sound()        
+        self.plugin_base.backend.stop_all_sound()
 
 

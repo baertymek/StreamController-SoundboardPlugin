@@ -2,6 +2,8 @@ from enum import Enum
 
 ID = "com_buggex_soundboard"
 
+MAX_PLAYERS = 16
+
 SETTING_DEVICE = "selected_device"
 SETTING_PLAYER = "selected_player"
 
@@ -19,12 +21,12 @@ PLAYER_NAMES = {
 }
 
 class BehaviorIfPlaying(Enum):
-    Restart = 0
-    Stop    = 1
+    Stop    = 0
+    Restart = 1
     OnTop   = 2
 
 BehaviorIfPlayingNames = {
-  BehaviorIfPlaying.Restart:    "actions.play.if_playing.restart",
-  BehaviorIfPlaying.Stop:       "actions.play.if_playing.stop",
-  BehaviorIfPlaying.OnTop:      "actions.play.if_playing.ontop",
+    BehaviorIfPlaying.Stop:     "actions.play.if_playing.stop",
+    BehaviorIfPlaying.Restart:  "actions.play.if_playing.restart",
+    BehaviorIfPlaying.OnTop:    "actions.play.if_playing.on_top",
 }

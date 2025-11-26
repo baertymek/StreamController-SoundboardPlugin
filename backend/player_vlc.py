@@ -23,12 +23,17 @@ class PlayerVLC(PlayerInterface):
         self.stop_sound()
         self.device = device
 
-    def play_sound(self, path_to_sound, volume):
-        log.debug(f"Play file: {path_to_sound} at {volume}")
-        # Stop old
-        self.stop_sound()
+    def is_playing(self):
+        if self.player:
+            return self.player.is_playing()
 
-        # Start new
+    def remaining_time(self):
+        if self.player:
+            return self.player.get_length() - self.player.get_time()
+
+    def play_sound(self, path_to_sound, volume):
+        log.debug(f"Play file: {path_to_sound} at {volume}%")
+
         media = self.instance.media_new("file://" + path_to_sound)
         self.player = media.player_new_from_media()
         self.player.audio_output_device_set(None, self.find_device(self.player, self.device))
@@ -46,6 +51,7 @@ class PlayerVLC(PlayerInterface):
 
     def stop_sound(self):
         if self.player:
+            self.player.stop()
             self.player.release()
 
     def find_device(self, player, device_name):
